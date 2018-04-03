@@ -1,0 +1,32 @@
+*{
+  box-sizing: border-box;
+}
+
+body{
+	background: url("../images/dust_back.png") repeat;
+	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+/* Form styling */
+#feels-form{
+  float: right;
+  overflow: auto;
+  font-weight: bold;
+}
+
+#feels-input{
+  width: 350px;
+}
+
+/* Gif div styling */
+.gifStyle {
+  float: left;
+  margin: 5px;
+  font-weight: bold;
+}
+
+#gifs{
+  width: 1000px;
+}
+
+

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Feelings Giphy</title>
+  <!-- <link rel="stylesheet" type="text/css" href="./assets/css/reset.css"> -->
+  <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
+
+</head>
+<body>
+
+  <div class="container">
+    <!-- div to keep feelings buttons in -->
+    <div id="feels"></div> 
+  
+    <form id="feels-form">
+      Add A Feeling:
+      <br>
+      <input type="text" id="feels-input">
+      <br>
+      <!-- Button triggers new feelings to be added -->
+      <input id="add-feels" type="submit" value="Submit">
+    </form>
+
+    <!-- div for gifs -->
+    <div id="gifs"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+      // array of feelings
+      var topics = ["sad", "exhausted", "overwhelmed", "excited", "happy"];
+      const stateStill = "still";
+      const stateAnimate = "animate";
+
+//--------------------------------------------------------------------------------------------//
+       // displayTopicInfo function re-renders the HTML to display the appropriate content
+       function displayTopicInfo() {
+
+        var topics = $(this).attr("data-name");
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        topics + "&api_key=CqiYVVu6PUJZ0j3QCL9G5A8EdMy7sSzD&limit=10";
+
+        // Creates AJAX call for the specific topic button being clicked
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).then(function(response) {
+            console.log(response)
+
+            var results = response.data;
+            console.log(results);
+            //this loop is bonkers. there has to be a way to make it cleaner
+            for (var i = 0; i < results.length; i++){
+              var gifDiv = $("<div>");
+              gifDiv.addClass("gifStyle");
+              var ratings = $("<p>");
+              ratings.text("Rating: " + results[i].rating);
+              var feelsImage = $("<img>");
+              feelsImage.attr({
+                  "src": results[i].images.fixed_height_still.url,
+                  "data-still": results[i].images.fixed_height_still.url,
+                  "data-animate": results[i].images.fixed_height.url,
+                  "data-state": "still"  
+              });
+              feelsImage.addClass("gif");
+              gifDiv.append(ratings);
+              gifDiv.append(feelsImage);
+              $("#gifs").prepend(gifDiv);
+            }
+
+            $(".gif").on("click", function(){
+              const element = $(this);
+              const state = element.attr("data-state");
+              if (state === stateStill){
+                element.attr("src", element.attr("data-animate"))
+                element.attr("data-state", stateAnimate);
+              }
+              else {
+                element.attr("src", element.attr("data-still"));
+                element.attr("data-state", stateStill);
+              }
+            });
+        });
+        }
+//--------------------------------------------------------------------------------------------//
+      // This function displays topics
+      function displayTopics() {
+
+        // empty the div to not have repeat buttons
+        $("#feels").empty(); 
+
+        // loop to append a button for each item in array
+        for (var i = 0; i < topics.length; i++) {
+          var a = $("<button>");
+          // Adds a class of movie to our button
+          a.addClass("movie");
+          // Added a data-attribute
+          a.attr("data-name", topics[i]);
+          // Provided the initial button text
+          a.text(topics[i]);
+          // Added the button to the buttons-view div
+          $("#feels").append(a);
+        }
+      }
+//--------------------------------------------------------------------------------------------//
+      // On click function for submitting
+      $("#add-feels").on("click", function(event) {
+        // this lets you use submit button properly and hit enter to submit
+        event.preventDefault();
+
+        var feelings = $("#feels-input").val().trim();
+        var feelers = feelings.toLowerCase();
+        $("#feels-input").val("");
+        // this condition stops duplicates from being put into the array
+        if (!(topics.indexOf(feelers) > -1 )) {
+        topics.push(feelers);
+        }
+
+        // calls the function and renders the list of feelings buttons
+        displayTopics();
+      });
+
+      $(document).on("click", ".movie", displayTopicInfo);
+      // calls the function to display initial array items
+      displayTopics();
+
+    </script>
+  </div>
+
+  
+</body>
+</html>
