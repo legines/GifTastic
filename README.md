@@ -1,6 +1,6 @@
 # GifTastic
 
-[Click me to check out GifTastic!]()
+[Click me to check out GifTastic!](https://legines.github.io/GifTastic/)
 
 Used the GIPHY API to make a webpage with HTML/ JQuery that populates with gifs of a users choice
 
